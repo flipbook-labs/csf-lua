@@ -1,3 +1,8 @@
+# Rojo
+sourcemap.json
+/*.rbxm*
+/*.rbxl*
+
 # js-to-lua
 filemap.json
 
