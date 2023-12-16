@@ -1,0 +1,34 @@
+name: Fast Follow
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 8 * * *"
+
+jobs:
+  fast-follow:
+    timeout-minutes: 10
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout js-to-lua
+        uses: actions/checkout@v3
+        with:
+          path: js-to-lua-action
+          repository: roblox/js-to-lua
+
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          path: downstream-repository
+          ref: main
+
+      - name: set up github identity
+        run: |
+          git config --global user.name github-actions
+          git config --global user.email github@users.noreply.github.com
+
+      - name: Run fast follow
+        uses: ./js-to-lua-action/.github/actions/fast-follow
+        with:
+          github-token: ${{secrets.GITHUB_TOKEN}}
+          repo-path: downstream-repository
