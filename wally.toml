@@ -1,0 +1,8 @@
+[package]
+name = "ghostnaps/csf-lua"
+version = "0.1.0"
+registry = "https://github.com/UpliftGames/wally-index"
+realm = "shared"
+
+[dependencies]
+LuauPolyfill = "jsdotlua/luau-polyfill@1.2.6"

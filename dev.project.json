@@ -1,0 +1,16 @@
+{
+  "name": "CSF",
+  "tree": {
+    "$className": "DataModel",
+
+    "ReplicatedStorage": {
+      "Packages": {
+        "$path": "Packages",
+
+        "CSF": {
+          "$path": "src"
+        }
+      }
+    }
+  }
+}

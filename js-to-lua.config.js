@@ -21,5 +21,9 @@ module.exports = {
             (filename) => filename.endsWith(".test.lua"),
             (filename) => filename.replace(".test.lua", ".spec.lua")
         ],
+        [
+            (filename) => filename.endsWith("index.lua"),
+            (filename) => filename.replace("index.lua", "init.lua")
+        ],
     ]
 }
