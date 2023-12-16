@@ -1,5 +1,5 @@
 -- ROBLOX upstream: https://github.com/ComponentDriven/csf/blob/v0.1.2-next.0/src/index.ts
-local Packages --[[ ROBLOX comment: must define Packages module ]]
+local Packages = script:FindFirstAncestor("Packages")
 local LuauPolyfill = require(Packages.LuauPolyfill)
 local Array = LuauPolyfill.Array
 local Boolean = LuauPolyfill.Boolean
@@ -20,18 +20,9 @@ local function sanitize(string_)
 			error("not implemented"), --[[ ROBLOX TODO: Unhandled node for type: RegExpLiteral ]] --[[ /[ ’–—―′¿'`~!@#$%^&*()_|+\-=?;:'",.<>\{\}\[\]\\\/]/gi ]]
 			"-"
 		)
-		:replace(
-			error("not implemented"), --[[ ROBLOX TODO: Unhandled node for type: RegExpLiteral ]] --[[ /-+/g ]]
-			"-"
-		)
-		:replace(
-			error("not implemented"), --[[ ROBLOX TODO: Unhandled node for type: RegExpLiteral ]] --[[ /^-+/ ]]
-			""
-		)
-		:replace(
-			error("not implemented"), --[[ ROBLOX TODO: Unhandled node for type: RegExpLiteral ]] --[[ /-+$/ ]]
-			""
-		)
+		:replace(error("not implemented"), --[[ ROBLOX TODO: Unhandled node for type: RegExpLiteral ]] --[[ /-+/g ]] "-")
+		:replace(error("not implemented"), --[[ ROBLOX TODO: Unhandled node for type: RegExpLiteral ]] --[[ /^-+/ ]] "")
+		:replace(error("not implemented"), --[[ ROBLOX TODO: Unhandled node for type: RegExpLiteral ]] --[[ /-+$/ ]] "")
 end
 exports.sanitize = sanitize
 local function sanitizeSafe(string_, part: string)
@@ -39,10 +30,7 @@ local function sanitizeSafe(string_, part: string)
 	if sanitized == "" then
 		error(
 			Error.new(
-				("Invalid %s '%s', must include alphanumeric characters"):format(
-					tostring(part),
-					tostring(string_)
-				)
+				("Invalid %s '%s', must include alphanumeric characters"):format(tostring(part), tostring(string_))
 			)
 		)
 	end
@@ -54,9 +42,7 @@ end
 local function toId(kind: string, name: string?)
 	return ("%s%s"):format(
 		tostring(sanitizeSafe(kind, "kind")),
-		if Boolean.toJSBoolean(name)
-			then ("--%s"):format(tostring(sanitizeSafe(name, "name")))
-			else ""
+		if Boolean.toJSBoolean(name) then ("--%s"):format(tostring(sanitizeSafe(name, "name"))) else ""
 	)
 end
 exports.toId = toId
@@ -83,13 +69,10 @@ end
  ]]
 local function isExportStory(key: string, ref0: IncludeExcludeOptions)
 	local includeStories, excludeStories = ref0.includeStories, ref0.excludeStories
-	local ref = key ~= "__esModule"
-		and (not Boolean.toJSBoolean(includeStories) or matches(key, includeStories))
+	local ref = key ~= "__esModule" and (not Boolean.toJSBoolean(includeStories) or matches(key, includeStories))
 	return -- https://babeljs.io/docs/en/babel-plugin-transform-modules-commonjs
 		if Boolean.toJSBoolean(ref)
-		then not Boolean.toJSBoolean(excludeStories) or not Boolean.toJSBoolean(
-			matches(key, excludeStories)
-		)
+		then not Boolean.toJSBoolean(excludeStories) or not Boolean.toJSBoolean(matches(key, excludeStories))
 		else ref
 end
 exports.isExportStory = isExportStory

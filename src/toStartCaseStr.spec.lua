@@ -1,5 +1,5 @@
 -- ROBLOX upstream: https://github.com/ComponentDriven/csf/blob/v0.1.2-next.0/src/toStartCaseStr.test.ts
-local Packages --[[ ROBLOX comment: must define Packages module ]]
+local Packages = script:FindFirstAncestor("Packages")
 local JestGlobals = require(Packages.Dev.JestGlobals)
 local expect = JestGlobals.expect
 local test = JestGlobals.test

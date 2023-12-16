@@ -1,6 +1,6 @@
 -- ROBLOX upstream: https://github.com/ComponentDriven/csf/blob/v0.1.2-next.0/src/story.ts
 type void = nil --[[ ROBLOX FIXME: adding `void` type alias to make it easier to use Luau `void` equivalent when supported ]]
-local Packages --[[ ROBLOX comment: must define Packages module ]]
+local Packages = script:FindFirstAncestor("Packages")
 local LuauPolyfill = require(Packages.LuauPolyfill)
 local Object = LuauPolyfill.Object
 type Array<T> = LuauPolyfill.Array<T>
@@ -71,7 +71,7 @@ export type Renderer = { --[[* What is the type of the `component` annotation in
 --[[* @deprecated - use `Renderer` ]]
 export type AnyFramework = Renderer
 export type StoryContextForEnhancers<TRenderer = Renderer, TArgs = Args> = StoryIdentifier & {
-	component: (typeof((({} :: any) :: TRenderer & { T: any }).component))?,
+	component: typeof((({} :: any) :: TRenderer & { T: any }).component)?,
 	subcomponents: Record<string, typeof((({} :: any) :: TRenderer & { T: any }).component)>?,
 	parameters: Parameters,
 	initialArgs: TArgs,
@@ -90,23 +90,18 @@ export type StoryContextUpdate<TArgs = Args> = {
 	[string]: any,
 }
 export type ViewMode = "story" | "docs"
-export type StoryContextForLoaders<TRenderer = Renderer, TArgs = Args> = StoryContextForEnhancers<
-	TRenderer,
-	TArgs
-> & Required<
-	StoryContextUpdate<TArgs>
-> & {
-	hooks: unknown,
-	viewMode: ViewMode,
-	originalStoryFn: StoryFn<TRenderer>,
-}
+export type StoryContextForLoaders<TRenderer = Renderer, TArgs = Args> =
+	StoryContextForEnhancers<TRenderer, TArgs>
+	& Required<StoryContextUpdate<TArgs>>
+	& {
+		hooks: unknown,
+		viewMode: ViewMode,
+		originalStoryFn: StoryFn<TRenderer>,
+	}
 export type LoaderFunction<TRenderer = Renderer, TArgs = Args> = (
 	context: StoryContextForLoaders<TRenderer, TArgs>
 ) -> Promise<Record<string, any> | void> | Record<string, any> | void
-export type StoryContext<TRenderer = Renderer, TArgs = Args> = StoryContextForLoaders<
-	TRenderer,
-	TArgs
-> & {
+export type StoryContext<TRenderer = Renderer, TArgs = Args> = StoryContextForLoaders<TRenderer, TArgs> & {
 	loaded: Record<string, any>,
 	abortSignal: AbortSignal,
 	canvasElement: typeof((({} :: any) :: TRenderer).canvasElement),
@@ -132,9 +127,7 @@ export type ArgsStoryFn<TRenderer = Renderer, TArgs = Args> = (
 	args: TArgs,
 	context: StoryContext<TRenderer, TArgs>
 ) -> typeof((({} :: any) :: TRenderer & { T: TArgs }).storyResult) -- This is either type of user story function
-export type StoryFn<TRenderer = Renderer, TArgs = Args> =
-	LegacyStoryFn<TRenderer, TArgs>
-	| ArgsStoryFn<TRenderer, TArgs>
+export type StoryFn<TRenderer = Renderer, TArgs = Args> = LegacyStoryFn<TRenderer, TArgs> | ArgsStoryFn<TRenderer, TArgs>
 export type DecoratorFunction<TRenderer = Renderer, TArgs = Args> = (
 	fn: PartialStoryFn<TRenderer, TArgs>,
 	c: StoryContext<TRenderer, TArgs>
@@ -154,10 +147,7 @@ export type BaseAnnotations<TRenderer = Renderer, TArgs = Args> = { --[[*
    * Decorators defined in Meta will be applied to every story variation.
    * @see [Decorators](https://storybook.js.org/docs/addons/introduction/#1-decorators)
    ]]
-	decorators: (
-		Array<DecoratorFunction<TRenderer, Simplify<TArgs>>>
-		| DecoratorFunction<TRenderer, Simplify<TArgs>>
-	)?,
+	decorators: (Array<DecoratorFunction<TRenderer, Simplify<TArgs>>> | DecoratorFunction<TRenderer, Simplify<TArgs>>)?,
 	--[[*
    * Custom metadata for a story.
    * @see [Parameters](https://storybook.js.org/docs/basics/writing-stories/#parameters)
@@ -183,10 +173,7 @@ export type BaseAnnotations<TRenderer = Renderer, TArgs = Args> = { --[[*
    ]]
 	render: ArgsStoryFn<TRenderer, TArgs>?,
 }
-export type ProjectAnnotations<TRenderer = Renderer, TArgs = Args> = BaseAnnotations<
-	TRenderer,
-	TArgs
-> & {
+export type ProjectAnnotations<TRenderer = Renderer, TArgs = Args> = BaseAnnotations<TRenderer, TArgs> & {
 	argsEnhancers: Array<ArgsEnhancer<TRenderer, Args>>?,
 	argTypesEnhancers: Array<ArgTypesEnhancer<TRenderer, Args>>?,
 	globals: Globals?,
@@ -195,10 +182,7 @@ export type ProjectAnnotations<TRenderer = Renderer, TArgs = Args> = BaseAnnotat
 	runStep: StepRunner<TRenderer, TArgs>?,
 }
 type StoryDescriptor = Array<string> | RegExp
-export type ComponentAnnotations<TRenderer = Renderer, TArgs = Args> = BaseAnnotations<
-	TRenderer,
-	TArgs
-> & { --[[*
+export type ComponentAnnotations<TRenderer = Renderer, TArgs = Args> = BaseAnnotations<TRenderer, TArgs> & { --[[*
    * Title of the component which will be presented in the navigation. **Should be unique.**
    *
    * Components can be organized in a nested structure using "/" as a separator.
@@ -245,10 +229,8 @@ export type ComponentAnnotations<TRenderer = Renderer, TArgs = Args> = BaseAnnot
    *
    * Used by addons for automatic prop table generation and display of other component metadata.
    ]]
-	component: (typeof((
-		(
-			{} :: any
-		) :: TRenderer & { -- We fall back to `any` when TArgs is missing (and so TArgs will be Args).
+	component: typeof((
+		({} :: any) :: TRenderer & { -- We fall back to `any` when TArgs is missing (and so TArgs will be Args).
 			-- We also fallback to `any` for any other "top" type (Record<string, any>, Record<string, unknown>, any, unknown).
 			-- This is because you can not assign Component with more specific props, to a Component that accepts anything
 			-- For example this won't compile
@@ -264,7 +246,7 @@ export type ComponentAnnotations<TRenderer = Renderer, TArgs = Args> = BaseAnnot
 			-- If this all doesn't make sense, you may want to look at the test: You can assign a component to Meta, even when you pass a top type.
 			T: any,--[[ ROBLOX TODO: Unhandled node for type: TSConditionalType ]]--[[ Record<string, unknown> extends Required<TArgs> ? any : TArgs ]]
 		}
-	).component))?,
+	).component)?,
 	--[[*
    * Auxiliary subcomponents that are part of the stories.
    *
@@ -290,28 +272,28 @@ export type ComponentAnnotations<TRenderer = Renderer, TArgs = Args> = BaseAnnot
    ]]
 	tags: Array<Tag>?,
 }
-export type StoryAnnotations<TRenderer = Renderer, TArgs = Args, TRequiredArgs = Partial<TArgs>> =
-	BaseAnnotations<TRenderer, TArgs>
-	& { --[[*
+export type StoryAnnotations<TRenderer = Renderer, TArgs = Args, TRequiredArgs = Partial<TArgs>> = BaseAnnotations<
+	TRenderer,
+	TArgs
+> & { --[[*
    * Override the display name in the UI (CSF v3)
    ]]
-		name: StoryName?,
-		--[[*
+	name: StoryName?,
+	--[[*
    * Override the display name in the UI (CSF v2)
    ]]
-		storyName: StoryName?,
-		--[[*
+	storyName: StoryName?,
+	--[[*
    * Function that is executed after the story is rendered.
    ]]
-		play: PlayFunction<TRenderer, TArgs>?,
-		--[[*
+	play: PlayFunction<TRenderer, TArgs>?,
+	--[[*
    * Named tags for a story, used to filter stories in different contexts.
    ]]
-		tags: Array<Tag>?,
-		--[[* @deprecated ]]
-		story: Omit<StoryAnnotations<TRenderer, TArgs>, "story">?, -- eslint-disable-next-line @typescript-eslint/ban-types
-	}
-	& any --[[ ROBLOX TODO: Unhandled node for type: TSConditionalType ]] --[[ {} extends TRequiredArgs ? {
+	tags: Array<Tag>?,
+	--[[* @deprecated ]]
+	story: Omit<StoryAnnotations<TRenderer, TArgs>, "story">?, -- eslint-disable-next-line @typescript-eslint/ban-types
+} & any --[[ ROBLOX TODO: Unhandled node for type: TSConditionalType ]] --[[ {} extends TRequiredArgs ? {
   args?: TRequiredArgs;
 } : {
   args: TRequiredArgs;
