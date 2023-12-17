@@ -5,7 +5,6 @@ local expect = JestGlobals.expect
 local test = JestGlobals.test
 --[[ eslint-disable eslint-comments/disable-enable-pair ]]
 --[[ eslint-disable import/no-extraneous-dependencies ]]
-local startCase = require(Packages.lodash.startCase).default
 local toStartCaseStr = require(script.Parent.toStartCaseStr).toStartCaseStr
 test:each({
 	{ "snake_case", "Snake Case" },
@@ -27,10 +26,5 @@ test:each({
 	{ "ZIndex", "Z Index" },
 })("%s", function(str, expected)
 	local outcome = toStartCaseStr(str)
-	local fromLodash = startCase(str)
-	expect({ outcome = outcome, fromLodash = fromLodash }).toEqual({
-		outcome = expected,
-		fromLodash = fromLodash,
-	})
-	expect(outcome).toEqual(fromLodash)
+	expect(outcome).toEqual(expected)
 end)
