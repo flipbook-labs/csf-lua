@@ -1,4 +1,6 @@
 -- ROBLOX upstream: https://github.com/ComponentDriven/csf/blob/v0.1.2-next.0/src/includeConditionalArg.ts
+local HttpService = game:GetService("HttpService")
+
 local Packages = script:FindFirstAncestor("Packages")
 local LuauPolyfill = require(Packages.LuauPolyfill)
 local Array = LuauPolyfill.Array
@@ -10,7 +12,6 @@ local exports = {}
 --[[ eslint-disable eslint-comments/disable-enable-pair ]]
 --[[ eslint-disable import/no-extraneous-dependencies ]]
 --[[ @ts-expect-error (has no typings) ]]
-local isEqual = require(Packages["@ngard"]["tiny-isequal"]).isEqual
 local story = require(script.Parent.story)
 local Args = story.Args
 local Globals = story.Globals
@@ -34,19 +35,19 @@ local function testValue(cond: Omit<Conditional, "arg" | "global">, value: any)
 		count({ exists, eq, neq, truthy })
 		> 1 --[[ ROBLOX CHECK: operator '>' works only if either both arguments are strings or both are a number ]]
 	then
-		error(
-			Error.new(
-				("Invalid conditional test %s"):format(
-					tostring(JSON.stringify({ exists = exists, eq = eq, neq = neq }))
-				)
-			)
-		)
+		error(Error.new(
+			-- ROBLOX deviation START: Using HttpService to stringify json
+			`Invalid conditional test {HttpService:JSONEncode({ exists = exists, eq = eq, neq = neq })}`
+			-- ROBLOX deviation END
+		))
 	end
 	if typeof(eq) ~= "undefined" then
 		return isEqual(value, eq)
 	end
 	if typeof(neq) ~= "undefined" then
-		return not Boolean.toJSBoolean(isEqual(value, neq))
+		-- ROBLOX deviation START: Direct == comparison instead of using isEqual
+		return not Boolean.toJSBoolean(value == neq)
+		-- ROBLOX deviation END
 	end
 	if typeof(exists) ~= "undefined" then
 		local valueExists = typeof(value) ~= "undefined"
@@ -72,9 +73,9 @@ local function includeConditionalArg(argType: InputType, args: Args, globals: Gl
 		arg, global = ref.arg, ref.global
 	end
 	if count({ arg, global }) ~= 1 then
-		error(
-			Error.new(("Invalid conditional value %s"):format(tostring(JSON.stringify({ arg = arg, global = global }))))
-		)
+		-- ROBLOX deviation START: Using HttpService to stringify json
+		error(Error.new(`Invalid conditional value {HttpService:JSONEncode({ arg = arg, global = global })}`))
+		-- ROBLOX deviation END
 	end
 	local value = if Boolean.toJSBoolean(arg) then args[tostring(arg)] else globals[tostring(global)] -- eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 	return testValue(argType["if"] :: any, value)
