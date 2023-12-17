@@ -1,6 +1,7 @@
 -- ROBLOX upstream: https://github.com/ComponentDriven/csf/blob/v0.1.2-next.0/src/index.test.ts
 local Packages = script:FindFirstAncestor("Packages")
 local LuauPolyfill = require(Packages.LuauPolyfill)
+local RegExp = require(Packages.RegExp)
 local Array = LuauPolyfill.Array
 local Object = LuauPolyfill.Object
 type Array<T> = LuauPolyfill.Array<T>
@@ -100,34 +101,34 @@ describe("isExportStory", function()
 	end)
 	it("should filter stories by regex", function()
 		expect(isExportStory("a", {
-			includeStories = error("not implemented") --[[ ROBLOX TODO: Unhandled node for type: RegExpLiteral ]] --[[ /a/ ]],
+			includeStories = RegExp("a"),
 		})).toBeTruthy()
 		expect(isExportStory("a", {
-			includeStories = error("not implemented") --[[ ROBLOX TODO: Unhandled node for type: RegExpLiteral ]] --[[ /.*/ ]],
+			includeStories = RegExp(".*"),
 		})).toBeTruthy()
 		expect(isExportStory("a", {
-			includeStories = error("not implemented") --[[ ROBLOX TODO: Unhandled node for type: RegExpLiteral ]] --[[ /b/ ]],
+			includeStories = RegExp("b"),
 		})).toBeFalsy()
 		expect(isExportStory("a", {
-			excludeStories = error("not implemented") --[[ ROBLOX TODO: Unhandled node for type: RegExpLiteral ]] --[[ /a/ ]],
+			excludeStories = RegExp("a"),
 		})).toBeFalsy()
 		expect(isExportStory("a", {
-			excludeStories = error("not implemented") --[[ ROBLOX TODO: Unhandled node for type: RegExpLiteral ]] --[[ /.*/ ]],
+			excludeStories = RegExp(".*"),
 		})).toBeFalsy()
 		expect(isExportStory("a", {
-			excludeStories = error("not implemented") --[[ ROBLOX TODO: Unhandled node for type: RegExpLiteral ]] --[[ /b/ ]],
+			excludeStories = RegExp("b"),
 		})).toBeTruthy()
 		expect(isExportStory("a", {
-			includeStories = error("not implemented") --[[ ROBLOX TODO: Unhandled node for type: RegExpLiteral ]] --[[ /a/ ]],
+			includeStories = RegExp("a"),
 			excludeStories = { "a" },
 		})).toBeFalsy()
 		expect(isExportStory("a", {
-			includeStories = error("not implemented") --[[ ROBLOX TODO: Unhandled node for type: RegExpLiteral ]] --[[ /.*/ ]],
-			excludeStories = error("not implemented") --[[ ROBLOX TODO: Unhandled node for type: RegExpLiteral ]] --[[ /.*/ ]],
+			includeStories = RegExp(".*"),
+			excludeStories = RegExp(".*"),
 		})).toBeFalsy()
 		expect(isExportStory("a", {
-			includeStories = error("not implemented") --[[ ROBLOX TODO: Unhandled node for type: RegExpLiteral ]] --[[ /a/ ]],
-			excludeStories = error("not implemented") --[[ ROBLOX TODO: Unhandled node for type: RegExpLiteral ]] --[[ /b/ ]],
+			includeStories = RegExp("a"),
+			excludeStories = RegExp("b"),
 		})).toBeTruthy()
 	end)
 end)

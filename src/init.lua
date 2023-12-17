@@ -1,11 +1,13 @@
 -- ROBLOX upstream: https://github.com/ComponentDriven/csf/blob/v0.1.2-next.0/src/index.ts
 local Packages = script:FindFirstAncestor("Packages")
 local LuauPolyfill = require(Packages.LuauPolyfill)
+local RegExp = require(Packages.RegExp)
 local Array = LuauPolyfill.Array
 local Boolean = LuauPolyfill.Boolean
 local Error = LuauPolyfill.Error
 local Object = LuauPolyfill.Object
 type Array<T> = LuauPolyfill.Array<T>
+type RegExp = RegExp.RegExp
 local exports = {}
 local toStartCaseStr = require(script.toStartCaseStr).toStartCaseStr
 --[[*
@@ -15,14 +17,14 @@ local toStartCaseStr = require(script.toStartCaseStr).toStartCaseStr
  ]]
 local function sanitize(string_)
 	return string_
-		:toLowerCase() -- eslint-disable-next-line no-useless-escape
+		:toLowerCase()
+		-- eslint-disable-next-line no-useless-escape
 		:replace(
-			error("not implemented"), --[[ ROBLOX TODO: Unhandled node for type: RegExpLiteral ]] --[[ /[ ’–—―′¿'`~!@#$%^&*()_|+\-=?;:'",.<>\{\}\[\]\\\/]/gi ]]
-			"-"
+			RegExp("[ ’–—―′¿'`~!@#$%^&*()_|+-=?;:'\",.<>{}[]\\/]", "gi")("-")
 		)
-		:replace(error("not implemented"), --[[ ROBLOX TODO: Unhandled node for type: RegExpLiteral ]] --[[ /-+/g ]] "-")
-		:replace(error("not implemented"), --[[ ROBLOX TODO: Unhandled node for type: RegExpLiteral ]] --[[ /^-+/ ]] "")
-		:replace(error("not implemented"), --[[ ROBLOX TODO: Unhandled node for type: RegExpLiteral ]] --[[ /-+$/ ]] "")
+		:replace(RegExp("-+", "g")("-"))
+		:replace(RegExp("^-+", ""))
+		:replace(RegExp("-+$", ""))
 end
 exports.sanitize = sanitize
 local function sanitizeSafe(string_, part: string)
