@@ -5,6 +5,9 @@
     "ReplicatedStorage": {
       "Packages": {
         "$path": "Packages",
+        "Dev": {
+          "$path": "DevPackages"
+        },
         "CSF": {
           "$path": "src"
         }

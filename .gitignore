@@ -11,4 +11,5 @@ filemap.json
 
 # Wally
 Packages/
+DevPackages/
 wally.lock
