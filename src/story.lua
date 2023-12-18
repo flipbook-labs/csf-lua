@@ -80,8 +80,10 @@ export type Renderer = { --[[* What is the type of the `component` annotation in
 -- export type AnyFramework = Renderer
 -- ROBLOX deviation END
 export type StoryContextForEnhancers<TRenderer = Renderer, TArgs = Args> = StoryIdentifier & {
-	component: typeof((({} :: any) :: TRenderer & { T: any }).component)?,
-	subcomponents: Record<string, typeof((({} :: any) :: TRenderer & { T: any }).component)>?,
+	-- ROBLOX deviation START: Using `unknown` type which matches Renderer's `component` type
+	component: unknown?,
+	subcomponents: Record<string, unknown>?,
+	-- ROBLOX deviation END
 	parameters: Parameters,
 	initialArgs: TArgs,
 	argTypes: StrictArgTypes<TArgs>,
@@ -101,11 +103,15 @@ export type StoryContextUpdate<TArgs = Args> = {
 export type ViewMode = "story" | "docs"
 export type StoryContextForLoaders<TRenderer = Renderer, TArgs = Args> =
 	StoryContextForEnhancers<TRenderer, TArgs>
-	& Required<StoryContextUpdate<TArgs>>
+	-- ROBLOX deviation START: Unknown type 'Required'
+	& StoryContextUpdate<TArgs>
+	-- ROBLOX deviation END
 	& {
 		hooks: unknown,
 		viewMode: ViewMode,
-		originalStoryFn: StoryFn<TRenderer>,
+		-- ROBLOX deviation START: Need extra argument
+		originalStoryFn: StoryFn<TRenderer, TArgs>,
+		-- ROBLOX deviation END
 	}
 export type LoaderFunction<TRenderer = Renderer, TArgs = Args> = (
 	context: StoryContextForLoaders<TRenderer, TArgs>
