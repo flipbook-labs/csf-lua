@@ -23,18 +23,24 @@ export type StoryId = string
 export type ComponentId = string
 export type ComponentTitle = string
 export type StoryName = string
---[[* @deprecated ]]
-export type StoryKind = ComponentTitle
+-- ROBLOX deviation START: Removing deprecated member
+-- --[[* @deprecated ]]
+-- export type StoryKind = ComponentTitle
+-- ROBLOX deviation END
 export type Tag = string
 export type StoryIdentifier = {
 	componentId: ComponentId,
 	title: ComponentTitle,
-	--[[* @deprecated ]]
-	kind: ComponentTitle,
+	-- ROBLOX deviation START: Removing deprecated member
+	-- --[[* @deprecated ]]
+	-- kind: ComponentTitle,
+	-- ROBLOX deviation END
 	id: StoryId,
 	name: StoryName,
-	--[[* @deprecated ]]
-	story: StoryName,
+	-- ROBLOX deviation START: Removing deprecated member
+	-- --[[* @deprecated ]]
+	-- story: StoryName,
+	-- ROBLOX deviation END
 	tags: Array<Tag>,
 }
 export type Parameters = { [string]: any }
@@ -69,8 +75,10 @@ export type Renderer = { --[[* What is the type of the `component` annotation in
 	-- Credits to Michael Arnaldi.
 	T: unknown?,
 }
---[[* @deprecated - use `Renderer` ]]
-export type AnyFramework = Renderer
+-- ROBLOX deviation START: Removing deprecated member
+-- --[[* @deprecated - use `Renderer` ]]
+-- export type AnyFramework = Renderer
+-- ROBLOX deviation END
 export type StoryContextForEnhancers<TRenderer = Renderer, TArgs = Args> = StoryIdentifier & {
 	component: typeof((({} :: any) :: TRenderer & { T: any }).component)?,
 	subcomponents: Record<string, typeof((({} :: any) :: TRenderer & { T: any }).component)>?,
@@ -292,8 +300,10 @@ export type StoryAnnotations<TRenderer = Renderer, TArgs = Args, TRequiredArgs =
    * Named tags for a story, used to filter stories in different contexts.
    ]]
 	tags: Array<Tag>?,
-	--[[* @deprecated ]]
-	story: Omit<StoryAnnotations<TRenderer, TArgs>, "story">?, -- eslint-disable-next-line @typescript-eslint/ban-types
+	-- ROBLOX deviation START: Removing deprecated member
+	-- -- [[* @deprecated ]]
+	-- story: Omit<StoryAnnotations<TRenderer, TArgs>, "story">?, -- eslint-disable-next-line @typescript-eslint/ban-types
+	-- ROBLOX deviation end
 } & any --[[ ROBLOX TODO: Unhandled node for type: TSConditionalType ]] --[[ {} extends TRequiredArgs ? {
   args?: TRequiredArgs;
 } : {
