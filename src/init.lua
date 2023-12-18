@@ -1,13 +1,12 @@
 -- ROBLOX upstream: https://github.com/ComponentDriven/csf/blob/v0.1.2-next.0/src/index.ts
 local Packages = script:FindFirstAncestor("Packages")
 local LuauPolyfill = require(Packages.LuauPolyfill)
-local RegExp = require(Packages.RegExp)
 local Array = LuauPolyfill.Array
 local Boolean = LuauPolyfill.Boolean
 local Error = LuauPolyfill.Error
 local Object = LuauPolyfill.Object
 type Array<T> = LuauPolyfill.Array<T>
-type RegExp = RegExp.RegExp
+local RegExp = require(Packages.RegExp)
 local exports = {}
 local toStartCaseStr = require(script.toStartCaseStr).toStartCaseStr
 --[[*
@@ -20,11 +19,15 @@ local function sanitize(string_)
 		:toLowerCase()
 		-- eslint-disable-next-line no-useless-escape
 		:replace(
-			RegExp("[ ’–—―′¿'`~!@#$%^&*()_|+-=?;:'\",.<>{}[]\\/]", "gi")("-")
+			RegExp(
+				"[ \u{2019}\u{2013}\u{2014}\u{2015}\u{2032}\u{BF}'`~!@#$%^&*()_|+\\-=?;:'\",.<>\\{\\}\\[\\]\\\\\\/]",
+				"gi"
+			), --[[ ROBLOX NOTE: global flag is not implemented yet ]]
+			"-"
 		)
-		:replace(RegExp("-+", "g")("-"))
-		:replace(RegExp("^-+", ""))
-		:replace(RegExp("-+$", ""))
+		:replace(RegExp("-+", "g") --[[ ROBLOX NOTE: global flag is not implemented yet ]], "-")
+		:replace(RegExp("^-+"), "")
+		:replace(RegExp("-+$"), "")
 end
 exports.sanitize = sanitize
 local function sanitizeSafe(string_, part: string)

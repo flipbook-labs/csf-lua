@@ -1,5 +1,7 @@
 -- ROBLOX upstream: https://github.com/ComponentDriven/csf/blob/v0.1.2-next.0/src/story.test.ts
 local Packages = script:FindFirstAncestor("Packages")
+local LuauPolyfill = require(Packages.LuauPolyfill)
+local Symbol = LuauPolyfill.Symbol
 local Promise = require(Packages.Promise)
 local JestGlobals = require(Packages.Dev.JestGlobals)
 local expect = JestGlobals.expect
@@ -8,17 +10,17 @@ local test = JestGlobals.test
 --[[ eslint-disable import/no-extraneous-dependencies ]]
 --[[ global HTMLElement ]]
 local expectTypeOf = require(Packages["expect-type"]).expectTypeOf
-local story = require(script.Parent.story)
-local Renderer = story.Renderer
-local Args = story.Args
-local ArgsFromMeta = story.ArgsFromMeta
-local ArgsStoryFn = story.ArgsStoryFn
-local ComponentAnnotations = story.ComponentAnnotations
-local DecoratorFunction = story.DecoratorFunction
-local LoaderFunction = story.LoaderFunction
-local ProjectAnnotations = story.ProjectAnnotations
-local StoryAnnotationsOrFn = story.StoryAnnotationsOrFn
-local StrictArgs = story.StrictArgs -- NOTE Example of internal type definition for @storybook/<X> (where X is a renderer)
+local storyJsModule = require(script.Parent.story)
+local Renderer = storyJsModule.Renderer
+local Args = storyJsModule.Args
+local ArgsFromMeta = storyJsModule.ArgsFromMeta
+local ArgsStoryFn = storyJsModule.ArgsStoryFn
+local ComponentAnnotations = storyJsModule.ComponentAnnotations
+local DecoratorFunction = storyJsModule.DecoratorFunction
+local LoaderFunction = storyJsModule.LoaderFunction
+local ProjectAnnotations = storyJsModule.ProjectAnnotations
+local StoryAnnotationsOrFn = storyJsModule.StoryAnnotationsOrFn
+local StrictArgs = storyJsModule.StrictArgs -- NOTE Example of internal type definition for @storybook/<X> (where X is a renderer)
 type XRenderer = Renderer & {
 	component: (
 		args: typeof((({} :: any) :: any --[[ ROBLOX TODO: Unhandled node for type: TSThisType ]] --[[ this ]]).T)

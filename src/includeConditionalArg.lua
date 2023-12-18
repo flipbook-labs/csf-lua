@@ -12,16 +12,19 @@ local exports = {}
 --[[ eslint-disable eslint-comments/disable-enable-pair ]]
 --[[ eslint-disable import/no-extraneous-dependencies ]]
 --[[ @ts-expect-error (has no typings) ]]
-local story = require(script.Parent.story)
-local Args = story.Args
-local Globals = story.Globals
-local InputType = story.InputType
-local Conditional = story.Conditional
+-- ROBLOX deviation START: Using direct == comparison instead
+-- local isEqual = require(Packages["@ngard"]["tiny-isequal"]).isEqual
+-- ROBLOX deviation END
+local storyJsModule = require(script.Parent.story)
+local Args = storyJsModule.Args
+local Globals = storyJsModule.Globals
+local InputType = storyJsModule.InputType
+local Conditional = storyJsModule.Conditional
 local function count(vals: Array<any>)
 	return Array.filter(
 		Array.map(vals, function(v)
 			return typeof(v) ~= "undefined"
-		end) --[[ ROBLOX CHECK: check if 'vals' is an Array ]],
+		end), --[[ ROBLOX CHECK: check if 'vals' is an Array ]]
 		Boolean
 	).length
 end
@@ -35,14 +38,14 @@ local function testValue(cond: Omit<Conditional, "arg" | "global">, value: any)
 		count({ exists, eq, neq, truthy })
 		> 1 --[[ ROBLOX CHECK: operator '>' works only if either both arguments are strings or both are a number ]]
 	then
-		error(Error.new(
-			-- ROBLOX deviation START: Using HttpService to stringify json
-			`Invalid conditional test {HttpService:JSONEncode({ exists = exists, eq = eq, neq = neq })}`
-			-- ROBLOX deviation END
-		))
+		-- ROBLOX deviation START: Using HttpService to stringify json
+		error(Error.new(`Invalid conditional test {HttpService:JSONEncode({ exists = exists, eq = eq, neq = neq })}`))
+		-- ROBLOX deviation END
 	end
 	if typeof(eq) ~= "undefined" then
-		return isEqual(value, eq)
+		-- ROBLOX deviation START: Using direct == comparison instead
+		return value == eq
+		-- ROBLOX deviation END
 	end
 	if typeof(neq) ~= "undefined" then
 		-- ROBLOX deviation START: Direct == comparison instead of using isEqual

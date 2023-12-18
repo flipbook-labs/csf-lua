@@ -1,7 +1,6 @@
 -- ROBLOX upstream: https://github.com/ComponentDriven/csf/blob/v0.1.2-next.0/src/index.test.ts
 local Packages = script:FindFirstAncestor("Packages")
 local LuauPolyfill = require(Packages.LuauPolyfill)
-local RegExp = require(Packages.RegExp)
 local Array = LuauPolyfill.Array
 local Object = LuauPolyfill.Object
 type Array<T> = LuauPolyfill.Array<T>
@@ -9,10 +8,11 @@ local JestGlobals = require(Packages.Dev.JestGlobals)
 local describe = JestGlobals.describe
 local expect = JestGlobals.expect
 local it = JestGlobals.it
-local CSF = require(script.Parent)
-local toId = CSF.toId
-local storyNameFromExport = CSF.storyNameFromExport
-local isExportStory = CSF.isExportStory
+local RegExp = require(Packages.RegExp)
+local indexJsModule = require(script.Parent)
+local toId = indexJsModule.toId
+local storyNameFromExport = indexJsModule.storyNameFromExport
+local isExportStory = indexJsModule.isExportStory
 describe("toId", function()
 	local testCases: Array<Array<string | string | nil>> = {
 		-- name, kind, story, output
@@ -100,35 +100,14 @@ describe("isExportStory", function()
 		expect(isExportStory("a", { includeStories = { "a" }, excludeStories = { "b" } })).toBeTruthy()
 	end)
 	it("should filter stories by regex", function()
-		expect(isExportStory("a", {
-			includeStories = RegExp("a"),
-		})).toBeTruthy()
-		expect(isExportStory("a", {
-			includeStories = RegExp(".*"),
-		})).toBeTruthy()
-		expect(isExportStory("a", {
-			includeStories = RegExp("b"),
-		})).toBeFalsy()
-		expect(isExportStory("a", {
-			excludeStories = RegExp("a"),
-		})).toBeFalsy()
-		expect(isExportStory("a", {
-			excludeStories = RegExp(".*"),
-		})).toBeFalsy()
-		expect(isExportStory("a", {
-			excludeStories = RegExp("b"),
-		})).toBeTruthy()
-		expect(isExportStory("a", {
-			includeStories = RegExp("a"),
-			excludeStories = { "a" },
-		})).toBeFalsy()
-		expect(isExportStory("a", {
-			includeStories = RegExp(".*"),
-			excludeStories = RegExp(".*"),
-		})).toBeFalsy()
-		expect(isExportStory("a", {
-			includeStories = RegExp("a"),
-			excludeStories = RegExp("b"),
-		})).toBeTruthy()
+		expect(isExportStory("a", { includeStories = RegExp("a") })).toBeTruthy()
+		expect(isExportStory("a", { includeStories = RegExp(".*") })).toBeTruthy()
+		expect(isExportStory("a", { includeStories = RegExp("b") })).toBeFalsy()
+		expect(isExportStory("a", { excludeStories = RegExp("a") })).toBeFalsy()
+		expect(isExportStory("a", { excludeStories = RegExp(".*") })).toBeFalsy()
+		expect(isExportStory("a", { excludeStories = RegExp("b") })).toBeTruthy()
+		expect(isExportStory("a", { includeStories = RegExp("a"), excludeStories = { "a" } })).toBeFalsy()
+		expect(isExportStory("a", { includeStories = RegExp(".*"), excludeStories = RegExp(".*") })).toBeFalsy()
+		expect(isExportStory("a", { includeStories = RegExp("a"), excludeStories = RegExp("b") })).toBeTruthy()
 	end)
 end)

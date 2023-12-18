@@ -9,17 +9,16 @@ type Omit<T, K> = T --[[ ROBLOX TODO: TS 'Omit' built-in type is not available i
 -- type Parameters<T> = any --[[ ROBLOX TODO: TS 'Parameters' built-in type is not available in Luau ]]
 type Partial<T> = T --[[ ROBLOX TODO: TS 'Partial' built-in type is not available in Luau ]]
 type Record<K, T> = { [K]: T } --[[ ROBLOX TODO: TS 'Record' built-in type is not available in Luau ]]
-type Unknown = any
 local exports = {}
 -- ROBLOX deviation START: Would be too much effort to port to type-fest for now
 type RemoveIndexSignature = any
 type Simplify = any
 type UnionToIntersection<T> = T
 -- ROBLOX deviation END
-local SBTypeModule = require(script.Parent.SBType)
-type SBScalarType = SBTypeModule.SBScalarType
-type SBType = SBTypeModule.SBType
-Object.assign(exports, SBTypeModule)
+local sBTypeModule = require(script.Parent.SBType)
+type SBScalarType = sBTypeModule.SBScalarType
+type SBType = sBTypeModule.SBType
+Object.assign(exports, sBTypeModule)
 export type StoryId = string
 export type ComponentId = string
 export type ComponentTitle = string
@@ -39,7 +38,7 @@ export type StoryIdentifier = {
 	tags: Array<Tag>,
 }
 export type Parameters = { [string]: any }
-export type StrictParameters = { [string]: Unknown }
+export type StrictParameters = { [string]: unknown }
 type ConditionalTest = { truthy: boolean? } | { exists: boolean } | { eq: any } | { neq: any }
 type ConditionalValue = { arg: string } | { global: string }
 export type Conditional = ConditionalValue & ConditionalTest
@@ -53,28 +52,28 @@ export type InputType = {
 }
 export type StrictInputType = InputType & { name: string, type: SBType? }
 export type Args = { [string]: any }
-export type StrictArgs = { [string]: Unknown }
+export type StrictArgs = { [string]: unknown }
 export type ArgTypes<TArgs = Args> = any --[[ ROBLOX TODO: Unhandled node for type: TSMappedType ]] --[[ { [name in keyof TArgs]: InputType } ]]
 export type StrictArgTypes<TArgs = Args> = any --[[ ROBLOX TODO: Unhandled node for type: TSMappedType ]] --[[ { [name in keyof TArgs]: StrictInputType } ]]
 export type Globals = { [string]: any }
 export type GlobalTypes = { [string]: InputType }
 export type StrictGlobalTypes = { [string]: StrictInputType }
 export type Renderer = { --[[* What is the type of the `component` annotation in this renderer? ]]
-	component: Unknown,
+	component: unknown,
 	--[[* What does the story function return in this renderer? ]]
-	storyResult: Unknown,
+	storyResult: unknown,
 	--[[* What type of element does this renderer render to? ]]
-	canvasElement: Unknown, -- A generic type T that can be used in the definition of the component like this:
+	canvasElement: unknown, -- A generic type T that can be used in the definition of the component like this:
 	-- component: (args: this['T']) => string;
 	-- This generic type will eventually be filled in with TArgs
 	-- Credits to Michael Arnaldi.
-	T: Unknown?,
+	T: unknown?,
 }
 --[[* @deprecated - use `Renderer` ]]
 export type AnyFramework = Renderer
 export type StoryContextForEnhancers<TRenderer = Renderer, TArgs = Args> = StoryIdentifier & {
-	component: Unknown?,
-	subcomponents: Record<string, Unknown>?,
+	component: typeof((({} :: any) :: TRenderer & { T: any }).component)?,
+	subcomponents: Record<string, typeof((({} :: any) :: TRenderer & { T: any }).component)>?,
 	parameters: Parameters,
 	initialArgs: TArgs,
 	argTypes: StrictArgTypes<TArgs>,
@@ -94,10 +93,9 @@ export type StoryContextUpdate<TArgs = Args> = {
 export type ViewMode = "story" | "docs"
 export type StoryContextForLoaders<TRenderer = Renderer, TArgs = Args> =
 	StoryContextForEnhancers<TRenderer, TArgs>
-	& StoryContextUpdate<TArgs>
-	-- & Required<StoryContextUpdate<TArgs>>
+	& Required<StoryContextUpdate<TArgs>>
 	& {
-		hooks: Unknown,
+		hooks: unknown,
 		viewMode: ViewMode,
 		originalStoryFn: StoryFn<TRenderer>,
 	}
@@ -234,20 +232,20 @@ export type ComponentAnnotations<TRenderer = Renderer, TArgs = Args> = BaseAnnot
    ]]
 	component: typeof((
 		({} :: any) :: TRenderer & { -- We fall back to `any` when TArgs is missing (and so TArgs will be Args).
-			-- We also fallback to `any` for any other "top" type (Record<string, any>, Record<string, Unknown>, any, Unknown).
+			-- We also fallback to `any` for any other "top" type (Record<string, any>, Record<string, unknown>, any, unknown).
 			-- This is because you can not assign Component with more specific props, to a Component that accepts anything
 			-- For example this won't compile
 			-- const Button: FC<Args> = (props: {prop: number} ) => {}
 			--
 			-- Note that the subtyping relationship is inversed for T and (t: T) => any. As this is fine:
 			-- const args: Args = { prop: 1 };
-			-- The correct way would probably to fall back to `never`, being the inverse of Unknown. Or maybe `Record<string, never>`
+			-- The correct way would probably to fall back to `never`, being the inverse of unknown. Or maybe `Record<string, never>`
 			--
-			-- Any is really weird as it pretends to be never and Unknown at the same time (so being the absolute bottom and top type at the same time)
+			-- Any is really weird as it pretends to be never and unknown at the same time (so being the absolute bottom and top type at the same time)
 			-- However, I don't have the guts to fallback to Record<string, never>, forgive me.
 			--
 			-- If this all doesn't make sense, you may want to look at the test: You can assign a component to Meta, even when you pass a top type.
-			T: any,--[[ ROBLOX TODO: Unhandled node for type: TSConditionalType ]]--[[ Record<string, Unknown> extends Required<TArgs> ? any : TArgs ]]
+			T: any,--[[ ROBLOX TODO: Unhandled node for type: TSConditionalType ]]--[[ Record<string, unknown> extends Required<TArgs> ? any : TArgs ]]
 		}
 	).component)?,
 	--[[*
@@ -317,7 +315,7 @@ export type ArgsFromMeta<TRenderer, Meta> = any --[[ ROBLOX TODO: Unhandled node
   render?: ArgsStoryFn<TRenderer, infer RArgs>;
   loaders?: (infer Loaders)[] | infer Loaders;
   decorators?: (infer Decorators)[] | infer Decorators;
-} ? Simplify<RemoveIndexSignature<RArgs & DecoratorsArgs<TRenderer, Decorators> & LoaderArgs<TRenderer, Loaders>>> : Unknown ]]
-type DecoratorsArgs<TRenderer, Decorators> = UnionToIntersection<any --[[ ROBLOX TODO: Unhandled node for type: TSConditionalType ]] --[[ Decorators extends DecoratorFunction<TRenderer, infer TArgs> ? TArgs : Unknown ]]>
-type LoaderArgs<TRenderer, Loaders> = UnionToIntersection<any --[[ ROBLOX TODO: Unhandled node for type: TSConditionalType ]] --[[ Loaders extends LoaderFunction<TRenderer, infer TArgs> ? TArgs : Unknown ]]>
+} ? Simplify<RemoveIndexSignature<RArgs & DecoratorsArgs<TRenderer, Decorators> & LoaderArgs<TRenderer, Loaders>>> : unknown ]]
+type DecoratorsArgs<TRenderer, Decorators> = UnionToIntersection<any --[[ ROBLOX TODO: Unhandled node for type: TSConditionalType ]] --[[ Decorators extends DecoratorFunction<TRenderer, infer TArgs> ? TArgs : unknown ]]>
+type LoaderArgs<TRenderer, Loaders> = UnionToIntersection<any --[[ ROBLOX TODO: Unhandled node for type: TSConditionalType ]] --[[ Loaders extends LoaderFunction<TRenderer, infer TArgs> ? TArgs : unknown ]]>
 return exports

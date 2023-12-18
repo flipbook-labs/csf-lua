@@ -4,11 +4,11 @@ local JestGlobals = require(Packages.Dev.JestGlobals)
 local describe = JestGlobals.describe
 local expect = JestGlobals.expect
 local it = JestGlobals.it
-local includeConditionalArgModule = require(script.Parent.includeConditionalArg)
-local includeConditionalArg = includeConditionalArgModule.includeConditionalArg
-local testValue = includeConditionalArgModule.testValue
-local story = require(script.Parent.story)
-type Conditional = story.Conditional
+local includeConditionalArgJsModule = require(script.Parent.includeConditionalArg)
+local includeConditionalArg = includeConditionalArgJsModule.includeConditionalArg
+local testValue = includeConditionalArgJsModule.testValue
+local storyJsModule = require(script.Parent.story)
+type Conditional = storyJsModule.Conditional
 describe("testValue", function()
 	describe("truthy", function()
 		it:each({
@@ -113,7 +113,13 @@ describe("includeConditionalArg", function()
 		describe("neq", function()
 			it:each({
 				{ "scalar true", { ["if"] = { arg = "a", neq = 1 } }, { a = 2 }, {}, true },
-				{ "scalar false", { ["if"] = { arg = "a", neq = 1 } }, { a = 1 }, { a = 2 }, false },
+				{
+					"scalar false",
+					{ ["if"] = { arg = "a", neq = 1 } },
+					{ a = 1 },
+					{ a = 2 },
+					false,
+				},
 			})("%s", function(_name, argType, args, globals, expected)
 				expect(includeConditionalArg(argType, args, globals)).toBe(expected)
 			end)
@@ -124,16 +130,40 @@ describe("includeConditionalArg", function()
 			it:each({
 				{ "implicit true", { ["if"] = { global = "a" } }, {}, { a = 1 }, true },
 				{ "implicit undefined", { ["if"] = { global = "a" } }, {}, {}, false },
-				{ "truthy true", { ["if"] = { global = "a", truthy = true } }, {}, { a = 0 }, false },
-				{ "truthy false", { ["if"] = { global = "a", truthy = false } }, {}, { a = 0 }, true },
+				{
+					"truthy true",
+					{ ["if"] = { global = "a", truthy = true } },
+					{},
+					{ a = 0 },
+					false,
+				},
+				{
+					"truthy false",
+					{ ["if"] = { global = "a", truthy = false } },
+					{},
+					{ a = 0 },
+					true,
+				},
 			})("%s", function(_name, argType, args, globals, expected)
 				expect(includeConditionalArg(argType, args, globals)).toBe(expected)
 			end)
 		end)
 		describe("exists", function()
 			it:each({
-				{ "implicit exist true", { ["if"] = { global = "a", exists = true } }, {}, { a = 1 }, true },
-				{ "implicit exist false", { ["if"] = { global = "a", exists = true } }, { a = 1 }, {}, false },
+				{
+					"implicit exist true",
+					{ ["if"] = { global = "a", exists = true } },
+					{},
+					{ a = 1 },
+					true,
+				},
+				{
+					"implicit exist false",
+					{ ["if"] = { global = "a", exists = true } },
+					{ a = 1 },
+					{},
+					false,
+				},
 			})("%s", function(_name, argType, args, globals, expected)
 				expect(includeConditionalArg(argType, args, globals)).toBe(expected)
 			end)
@@ -149,7 +179,13 @@ describe("includeConditionalArg", function()
 		describe("neq", function()
 			it:each({
 				{ "scalar true", { ["if"] = { global = "a", neq = 1 } }, {}, { a = 2 }, true },
-				{ "scalar false", { ["if"] = { global = "a", neq = 1 } }, { a = 2 }, { a = 1 }, false },
+				{
+					"scalar false",
+					{ ["if"] = { global = "a", neq = 1 } },
+					{ a = 2 },
+					{ a = 1 },
+					false,
+				},
 			})("%s", function(_name, argType, args, globals, expected)
 				expect(includeConditionalArg(argType, args, globals)).toBe(expected)
 			end)
