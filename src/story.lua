@@ -12,7 +12,7 @@ type Record<K, T> = { [K]: T } --[[ ROBLOX TODO: TS 'Record' built-in type is no
 local exports = {}
 -- ROBLOX deviation START: Would be too much effort to port to type-fest for now
 type RemoveIndexSignature = any
-type Simplify = any
+type Simplify<T> = T
 type UnionToIntersection<T> = T
 -- ROBLOX deviation END
 local sBTypeModule = require(script.Parent.SBType)
@@ -118,8 +118,8 @@ export type LoaderFunction<TRenderer = Renderer, TArgs = Args> = (
 ) -> Promise<Record<string, any> | void> | Record<string, any> | void
 export type StoryContext<TRenderer = Renderer, TArgs = Args> = StoryContextForLoaders<TRenderer, TArgs> & {
 	loaded: Record<string, any>,
-	abortSignal: AbortSignal,
-	canvasElement: typeof((({} :: any) :: TRenderer).canvasElement),
+	abortSignal: any, -- AbortSignal,
+	canvasElement: unknown,
 }
 export type StepLabel = string
 export type StepFunction<TRenderer = Renderer, TArgs = Args> = (
@@ -134,19 +134,17 @@ export type PlayFunction<TRenderer = Renderer, TArgs = Args> = (
 ) -> Promise<void> | void -- This is the type of story function passed to a decorator -- does not rely on being passed any context
 export type PartialStoryFn<TRenderer = Renderer, TArgs = Args> = (
 	update: StoryContextUpdate<Partial<TArgs>>?
-) -> typeof((({} :: any) :: TRenderer).storyResult) -- This is a passArgsFirst: false user story function
-export type LegacyStoryFn<TRenderer = Renderer, TArgs = Args> = (
-	context: StoryContext<TRenderer, TArgs>
-) -> typeof((({} :: any) :: TRenderer).storyResult) -- This is a passArgsFirst: true user story function
+) -> unknown -- This is a passArgsFirst: false user story function
+export type LegacyStoryFn<TRenderer = Renderer, TArgs = Args> = (context: StoryContext<TRenderer, TArgs>) -> unknown -- This is a passArgsFirst: true user story function
 export type ArgsStoryFn<TRenderer = Renderer, TArgs = Args> = (
 	args: TArgs,
 	context: StoryContext<TRenderer, TArgs>
-) -> typeof((({} :: any) :: TRenderer & { T: TArgs }).storyResult) -- This is either type of user story function
+) -> unknown -- This is either type of user story function
 export type StoryFn<TRenderer = Renderer, TArgs = Args> = LegacyStoryFn<TRenderer, TArgs> | ArgsStoryFn<TRenderer, TArgs>
 export type DecoratorFunction<TRenderer = Renderer, TArgs = Args> = (
 	fn: PartialStoryFn<TRenderer, TArgs>,
 	c: StoryContext<TRenderer, TArgs>
-) -> typeof((({} :: any) :: TRenderer).storyResult)
+) -> unknown
 export type DecoratorApplicator<TRenderer = Renderer, TArgs = Args> = (
 	storyFn: LegacyStoryFn<TRenderer, TArgs>,
 	decorators: Array<DecoratorFunction<TRenderer, TArgs>>
@@ -196,7 +194,7 @@ export type ProjectAnnotations<TRenderer = Renderer, TArgs = Args> = BaseAnnotat
 	applyDecorators: DecoratorApplicator<TRenderer, Args>?,
 	runStep: StepRunner<TRenderer, TArgs>?,
 }
-type StoryDescriptor = Array<string> | RegExp
+type StoryDescriptor = Array<string> -- | RegExp
 export type ComponentAnnotations<TRenderer = Renderer, TArgs = Args> = BaseAnnotations<TRenderer, TArgs> & { --[[*
    * Title of the component which will be presented in the navigation. **Should be unique.**
    *
@@ -244,24 +242,7 @@ export type ComponentAnnotations<TRenderer = Renderer, TArgs = Args> = BaseAnnot
    *
    * Used by addons for automatic prop table generation and display of other component metadata.
    ]]
-	component: typeof((
-		({} :: any) :: TRenderer & { -- We fall back to `any` when TArgs is missing (and so TArgs will be Args).
-			-- We also fallback to `any` for any other "top" type (Record<string, any>, Record<string, unknown>, any, unknown).
-			-- This is because you can not assign Component with more specific props, to a Component that accepts anything
-			-- For example this won't compile
-			-- const Button: FC<Args> = (props: {prop: number} ) => {}
-			--
-			-- Note that the subtyping relationship is inversed for T and (t: T) => any. As this is fine:
-			-- const args: Args = { prop: 1 };
-			-- The correct way would probably to fall back to `never`, being the inverse of unknown. Or maybe `Record<string, never>`
-			--
-			-- Any is really weird as it pretends to be never and unknown at the same time (so being the absolute bottom and top type at the same time)
-			-- However, I don't have the guts to fallback to Record<string, never>, forgive me.
-			--
-			-- If this all doesn't make sense, you may want to look at the test: You can assign a component to Meta, even when you pass a top type.
-			T: any,--[[ ROBLOX TODO: Unhandled node for type: TSConditionalType ]]--[[ Record<string, unknown> extends Required<TArgs> ? any : TArgs ]]
-		}
-	).component)?,
+	component: unknown?,
 	--[[*
    * Auxiliary subcomponents that are part of the stories.
    *
@@ -277,7 +258,7 @@ export type ComponentAnnotations<TRenderer = Renderer, TArgs = Args> = BaseAnnot
    *
    * By defining them each component will have its tab in the args table.
    ]]
-	subcomponents: Record<string, typeof((({} :: any) :: TRenderer).component)>?,
+	subcomponents: Record<string, unknown>?,
 	--[[*
    * Function that is executed after the story is rendered.
    ]]
@@ -287,7 +268,7 @@ export type ComponentAnnotations<TRenderer = Renderer, TArgs = Args> = BaseAnnot
    ]]
 	tags: Array<Tag>?,
 }
-export type StoryAnnotations<TRenderer = Renderer, TArgs = Args, TRequiredArgs = Partial<TArgs>> = BaseAnnotations<
+export type StoryAnnotations<TRenderer = Renderer, TArgs = Args, TRequiredArgs = TArgs> = BaseAnnotations<
 	TRenderer,
 	TArgs
 > & { --[[*
