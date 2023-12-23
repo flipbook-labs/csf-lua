@@ -23,7 +23,7 @@ type Conditional = storyJsModule.Conditional
 local function count(vals: Array<any>)
 	return Array.filter(
 		Array.map(vals, function(v)
-			return typeof(v) ~= "undefined"
+			return typeof(v) ~= nil
 		end), --[[ ROBLOX CHECK: check if 'vals' is an Array ]]
 		Boolean
 	).length
@@ -42,21 +42,21 @@ local function testValue(cond: Omit<Conditional, "arg" | "global">, value: any)
 		error(Error.new(`Invalid conditional test {HttpService:JSONEncode({ exists = exists, eq = eq, neq = neq })}`))
 		-- ROBLOX deviation END
 	end
-	if typeof(eq) ~= "undefined" then
+	if typeof(eq) ~= nil then
 		-- ROBLOX deviation START: Using direct == comparison instead
 		return value == eq
 		-- ROBLOX deviation END
 	end
-	if typeof(neq) ~= "undefined" then
+	if typeof(neq) ~= nil then
 		-- ROBLOX deviation START: Direct == comparison instead of using isEqual
 		return not Boolean.toJSBoolean(value == neq)
 		-- ROBLOX deviation END
 	end
-	if typeof(exists) ~= "undefined" then
-		local valueExists = typeof(value) ~= "undefined"
+	if typeof(exists) ~= nil then
+		local valueExists = typeof(value) ~= nil
 		return if Boolean.toJSBoolean(exists) then valueExists else not Boolean.toJSBoolean(valueExists)
 	end
-	local shouldBeTruthy = if typeof(truthy) == "undefined" then true else truthy
+	local shouldBeTruthy = if typeof(truthy) == nil then true else truthy
 	return if Boolean.toJSBoolean(shouldBeTruthy)
 		then not not Boolean.toJSBoolean(value)
 		else not Boolean.toJSBoolean(value)
