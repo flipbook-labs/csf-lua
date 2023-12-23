@@ -119,7 +119,7 @@ local function matches(storyKey: string, arrayOrRegex: StoryDescriptor)
 	if Boolean.toJSBoolean(Array.isArray(arrayOrRegex)) then
 		return Array.includes(arrayOrRegex, storyKey) --[[ ROBLOX CHECK: check if 'arrayOrRegex' is an Array ]]
 	end
-	return storyKey:match(arrayOrRegex)
+	return storyKey:match(arrayOrRegex :: string)
 end
 --[[*
  * Does a named export match CSF inclusion/exclusion options?
