@@ -16,10 +16,10 @@ local exports = {}
 -- local isEqual = require(Packages["@ngard"]["tiny-isequal"]).isEqual
 -- ROBLOX deviation END
 local storyJsModule = require(script.Parent.story)
-local Args = storyJsModule.Args
-local Globals = storyJsModule.Globals
-local InputType = storyJsModule.InputType
-local Conditional = storyJsModule.Conditional
+type Args = storyJsModule.Args
+type Globals = storyJsModule.Globals
+type InputType = storyJsModule.InputType
+type Conditional = storyJsModule.Conditional
 local function count(vals: Array<any>)
 	return Array.filter(
 		Array.map(vals, function(v)

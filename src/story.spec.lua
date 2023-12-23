@@ -11,16 +11,16 @@ local test = JestGlobals.test
 --[[ global HTMLElement ]]
 local expectTypeOf = require(Packages["expect-type"]).expectTypeOf
 local storyJsModule = require(script.Parent.story)
-local Renderer = storyJsModule.Renderer
-local Args = storyJsModule.Args
-local ArgsFromMeta = storyJsModule.ArgsFromMeta
-local ArgsStoryFn = storyJsModule.ArgsStoryFn
-local ComponentAnnotations = storyJsModule.ComponentAnnotations
-local DecoratorFunction = storyJsModule.DecoratorFunction
-local LoaderFunction = storyJsModule.LoaderFunction
-local ProjectAnnotations = storyJsModule.ProjectAnnotations
-local StoryAnnotationsOrFn = storyJsModule.StoryAnnotationsOrFn
-local StrictArgs = storyJsModule.StrictArgs -- NOTE Example of internal type definition for @storybook/<X> (where X is a renderer)
+type Renderer = storyJsModule.Renderer
+type Args = storyJsModule.Args
+type ArgsFromMeta = storyJsModule.ArgsFromMeta
+type ArgsStoryFn = storyJsModule.ArgsStoryFn
+type ComponentAnnotations = storyJsModule.ComponentAnnotations
+type DecoratorFunction = storyJsModule.DecoratorFunction
+type LoaderFunction = storyJsModule.LoaderFunction
+type ProjectAnnotations = storyJsModule.ProjectAnnotations
+type StoryAnnotationsOrFn = storyJsModule.StoryAnnotationsOrFn
+type StrictArgs = storyJsModule.StrictArgs -- NOTE Example of internal type definition for @storybook/<X> (where X is a renderer)
 type XRenderer = Renderer & {
 	component: (
 		args: typeof((({} :: any) :: any --[[ ROBLOX TODO: Unhandled node for type: TSThisType ]] --[[ this ]]).T)
