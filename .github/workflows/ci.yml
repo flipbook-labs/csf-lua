@@ -1,0 +1,73 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: Roblox/setup-foreman@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          allow-external-github-orgs: true
+
+      - name: Lint
+        run: |
+          selene generate-roblox-std
+          selene src/
+
+      - name: Format
+        run: stylua --check src/
+
+      - name: Install dependencies
+        run: ./scripts/wally-install.sh
+
+      - name: Get model file name
+        run: |
+          name=$(jq -r .name default.project.json)
+          sha=${GITHUB_SHA:0:7}
+          echo "MODEL_FILE=$name-$sha.rbxm" >> $GITHUB_ENV
+
+      - name: Build
+        run: rojo build -o ${{ env.MODEL_FILE }}
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: ${{ env.MODEL_FILE }}
+          path: ${{ env.MODEL_FILE }}
+
+  analyze:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: Roblox/setup-foreman@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          allow-external-github-orgs: true
+
+      - name: Install dependencies
+        run: ./scripts/wally-install.sh
+
+      - name: Analyze
+        run: ./scripts/analyze.sh
+
+  scripts-are-executable:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Ensure each script is executable
+        run: |
+          for f in ./scripts/*; do
+              if [[ ! -x "$f" ]]; then
+                  echo "Script '$f' is not executable"
+                  exit 1
+              fi
+          done

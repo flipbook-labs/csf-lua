@@ -2,14 +2,18 @@
   "name": "CSF",
   "tree": {
     "$className": "DataModel",
-
     "ReplicatedStorage": {
       "Packages": {
         "$path": "Packages",
-
+        "Dev": {
+          "$path": "DevPackages"
+        },
         "CSF": {
           "$path": "src"
         }
+      },
+      "Example": {
+        "$path": "example"
       }
     }
   }

@@ -1,11 +1,12 @@
 -- ROBLOX upstream: https://github.com/ComponentDriven/csf/blob/v0.1.2-next.0/src/toStartCaseStr.test.ts
-local Packages --[[ ROBLOX comment: must define Packages module ]]
+local Packages = script:FindFirstAncestor("Packages")
 local JestGlobals = require(Packages.Dev.JestGlobals)
 local expect = JestGlobals.expect
-local test = JestGlobals.test
---[[ eslint-disable eslint-comments/disable-enable-pair ]]
+local test = JestGlobals.test--[[ eslint-disable eslint-comments/disable-enable-pair ]]
 --[[ eslint-disable import/no-extraneous-dependencies ]]
-local startCase = require(Packages.lodash.startCase).default
+-- ROBLOX deviation START: In the interest of not porting all of lodash, this is unused
+-- local startCase = require(Packages.lodash.startCase).default
+-- ROBLOX deviation END
 local toStartCaseStr = require(script.Parent.toStartCaseStr).toStartCaseStr
 test:each({
 	{ "snake_case", "Snake Case" },
@@ -27,10 +28,7 @@ test:each({
 	{ "ZIndex", "Z Index" },
 })("%s", function(str, expected)
 	local outcome = toStartCaseStr(str)
-	local fromLodash = startCase(str)
-	expect({ outcome = outcome, fromLodash = fromLodash }).toEqual({
-		outcome = expected,
-		fromLodash = fromLodash,
-	})
-	expect(outcome).toEqual(fromLodash)
+	-- ROBLOX deviation START: We're not using lodash, so just one expectation
+	expect(outcome).toEqual(expected)
+	-- ROBLOX deviation END
 end)

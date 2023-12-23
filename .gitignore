@@ -1,6 +1,15 @@
+# Build artifacts
+build/
+
+# Rojo
+sourcemap.json
+/*.rbxm*
+/*.rbxl*
+
 # js-to-lua
 filemap.json
 
 # Wally
 Packages/
+DevPackages/
 wally.lock
