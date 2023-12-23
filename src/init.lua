@@ -139,7 +139,9 @@ export type SeparatorOptions = { rootSeparator: string | RegExp, groupSeparator:
  ]]
 local function parseKind(kind: string, ref0: SeparatorOptions)
 	local rootSeparator, groupSeparator = ref0.rootSeparator, ref0.groupSeparator
-	local root, remainder = table.unpack(kind:split(rootSeparator, 2), 1, 2)
+	-- ROBLOX deviation START: Use LuauPolyfill to set the split limit
+	local root, remainder = table.unpack(LuauPolyfill.String.split(kind, rootSeparator, 2), 1, 2)
+	-- ROBLOX deviation END
 	local groups = Array.filter(
 		(Boolean.toJSBoolean(remainder) and remainder or kind):split(groupSeparator),
 		function(i)
