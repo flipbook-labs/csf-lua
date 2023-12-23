@@ -8,7 +8,58 @@ local Object = LuauPolyfill.Object
 type Array<T> = LuauPolyfill.Array<T>
 local RegExp = require(Packages.RegExp)
 local exports = {}
+local story = require(script.story)
 local toStartCaseStr = require(script.toStartCaseStr).toStartCaseStr
+
+-- ROBLOX deviation START: Manually export types from `story`
+export type AnnotatedStoryFn = story.AnnotatedStoryFn
+export type Args = story.Args
+export type ArgsEnhancer = story.ArgsEnhancer
+export type ArgsStoryFn = story.ArgsStoryFn
+export type ArgTypes = story.ArgTypes
+export type ArgTypesEnhancer = story.ArgTypesEnhancer
+export type BaseAnnotations = story.BaseAnnotations
+export type ComponentAnnotations = story.ComponentAnnotations
+export type ComponentId = story.ComponentId
+export type ComponentTitle = story.ComponentTitle
+export type Conditional = story.Conditional
+export type DecoratorApplicator = story.DecoratorApplicator
+export type DecoratorFunction = story.DecoratorFunction
+export type Globals = story.Globals
+export type GlobalTypes = story.GlobalTypes
+export type InputType = story.InputType
+export type LegacyAnnotatedStoryFn = story.LegacyAnnotatedStoryFn
+export type LegacyStoryAnnotationsOrFn = story.LegacyStoryAnnotationsOrFn
+export type LegacyStoryFn = story.LegacyStoryFn
+export type LoaderFunction = story.LoaderFunction
+export type Parameters = story.Parameters
+export type PartialStoryFn = story.PartialStoryFn
+export type PlayFunction = story.PlayFunction
+export type PlayFunctionContext = story.PlayFunctionContext
+export type ProjectAnnotations = story.ProjectAnnotations
+export type Renderer = story.Renderer
+export type StepFunction = story.StepFunction
+export type StepLabel = story.StepLabel
+export type StepRunner = story.StepRunner
+export type StoryAnnotations = story.StoryAnnotations
+export type StoryAnnotationsOrFn = story.StoryAnnotationsOrFn
+export type StoryContext = story.StoryContext
+export type StoryContextForEnhancers = story.StoryContextForEnhancers
+export type StoryContextForLoaders = story.StoryContextForLoaders
+export type StoryContextUpdate = story.StoryContextUpdate
+export type StoryFn = story.StoryFn
+export type StoryId = story.StoryId
+export type StoryIdentifier = story.StoryIdentifier
+export type StoryName = story.StoryName
+export type StrictArgs = story.StrictArgs
+export type StrictArgTypes = story.StrictArgTypes
+export type StrictGlobalTypes = story.StrictGlobalTypes
+export type StrictInputType = story.StrictInputType
+export type StrictParameters = story.StrictParameters
+export type Tag = story.Tag
+export type ViewMode = story.ViewMode
+-- ROBLOX deviation END
+
 --[[*
  * Remove punctuation and illegal characters from a story ID.
  *
