@@ -7,6 +7,7 @@ local Error = LuauPolyfill.Error
 local Object = LuauPolyfill.Object
 type Array<T> = LuauPolyfill.Array<T>
 local RegExp = require(Packages.RegExp)
+type RegExp = RegExp.RegExp
 local exports = {}
 local story = require(script.story)
 local toStartCaseStr = require(script.toStartCaseStr).toStartCaseStr
@@ -109,7 +110,7 @@ local function storyNameFromExport(key: string)
 	return toStartCaseStr(key)
 end
 exports.storyNameFromExport = storyNameFromExport
-type StoryDescriptor = Array<string> | RegExp
+type StoryDescriptor = Array<string> | RegExp | string
 export type IncludeExcludeOptions = {
 	includeStories: StoryDescriptor?,
 	excludeStories: StoryDescriptor?,
