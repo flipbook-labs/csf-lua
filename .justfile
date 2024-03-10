@@ -27,8 +27,6 @@ wally-install:
 	wally-package-types --sourcemap {{ sourcemap_path }} {{ packages_dir }}
 
 set-flags:
-	#!/usr/bin/env bash
-	set -euo pipefail
 	mkdir -p {{ client_settings }}
 	cp -R scripts/ClientAppSettings.json {{ client_settings }}
 
