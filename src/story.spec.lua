@@ -233,8 +233,8 @@ test("You can assign a component to Meta, even when you pass a top type", functi
 	expectTypeOf({ component = Button }):toMatchTypeOf()
 	expectTypeOf({ component = Button }):toMatchTypeOf()
 	expectTypeOf({ component = Button }):toMatchTypeOf()
-	expectTypeOf({ component = Button })["not"]:toMatchTypeOf()
-	expectTypeOf({ component = Button })["not"]:toMatchTypeOf()
+	expectTypeOf({ component = Button }).never:toMatchTypeOf()
+	expectTypeOf({ component = Button }).never:toMatchTypeOf()
 end)
 ]=]
 -- ROBLOX deviation END

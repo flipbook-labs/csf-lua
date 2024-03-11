@@ -11,7 +11,7 @@ local storyJsModule = require(script.Parent.story)
 type Conditional = storyJsModule.Conditional
 describe("testValue", function()
 	describe("truthy", function()
-		it:each({
+		it.each({
 			{ "implicit true", {}, true, true },
 			{ "implicit truthy", {}, 1, true },
 			{ "implicit falsey", {}, 0, false },
@@ -26,7 +26,7 @@ describe("testValue", function()
 		end)
 	end)
 	describe("exists", function()
-		it:each({
+		it.each({
 			{ "exist", { exists = true }, 1, true },
 			{ "exist false", { exists = true }, nil, false },
 			{ "nexist", { exists = false }, nil, true },
@@ -36,7 +36,7 @@ describe("testValue", function()
 		end)
 	end)
 	describe("eq", function()
-		it:each({
+		it.each({
 			{ "true", { eq = 1 }, 1, true },
 			{ "false", { eq = 1 }, 2, false },
 			{ "undefined", { eq = nil }, nil, false },
@@ -48,7 +48,7 @@ describe("testValue", function()
 		end)
 	end)
 	describe("neq", function()
-		it:each({
+		it.each({
 			{ "true", { neq = 1 }, 2, true },
 			{ "false", { neq = 1 }, 1, false },
 			{ "undefined true", { neq = 1 }, nil, true },
@@ -86,7 +86,7 @@ describe("includeConditionalArg", function()
 	end)
 	describe("args", function()
 		describe("implicit", function()
-			it:each({
+			it.each({
 				{ "implicit true", { ["if"] = { arg = "a" } }, { a = 1 }, {}, true },
 				{ "truthy true", { ["if"] = { arg = "a", truthy = true } }, { a = 0 }, {}, false },
 				{ "truthy false", { ["if"] = { arg = "a", truthy = false } }, {}, {}, true },
@@ -95,7 +95,7 @@ describe("includeConditionalArg", function()
 			end)
 		end)
 		describe("exists", function()
-			it:each({
+			it.each({
 				{ "exist", { ["if"] = { arg = "a", exists = true } }, { a = 1 }, {}, true },
 				{ "exist false", { ["if"] = { arg = "a", exists = true } }, {}, {}, false },
 			})("%s", function(_name, argType, args, globals, expected)
@@ -103,7 +103,7 @@ describe("includeConditionalArg", function()
 			end)
 		end)
 		describe("eq", function()
-			it:each({
+			it.each({
 				{ "scalar true", { ["if"] = { arg = "a", eq = 1 } }, { a = 1 }, {}, true },
 				{ "scalar false", { ["if"] = { arg = "a", eq = 1 } }, { a = 2 }, { a = 1 }, false },
 			})("%s", function(_name, argType, args, globals, expected)
@@ -111,7 +111,7 @@ describe("includeConditionalArg", function()
 			end)
 		end)
 		describe("neq", function()
-			it:each({
+			it.each({
 				{ "scalar true", { ["if"] = { arg = "a", neq = 1 } }, { a = 2 }, {}, true },
 				{
 					"scalar false",
@@ -127,7 +127,7 @@ describe("includeConditionalArg", function()
 	end)
 	describe("globals", function()
 		describe("truthy", function()
-			it:each({
+			it.each({
 				{ "implicit true", { ["if"] = { global = "a" } }, {}, { a = 1 }, true },
 				{ "implicit undefined", { ["if"] = { global = "a" } }, {}, {}, false },
 				{
@@ -149,7 +149,7 @@ describe("includeConditionalArg", function()
 			end)
 		end)
 		describe("exists", function()
-			it:each({
+			it.each({
 				{
 					"implicit exist true",
 					{ ["if"] = { global = "a", exists = true } },
@@ -169,7 +169,7 @@ describe("includeConditionalArg", function()
 			end)
 		end)
 		describe("eq", function()
-			it:each({
+			it.each({
 				{ "scalar true", { ["if"] = { global = "a", eq = 1 } }, {}, { a = 1 }, true },
 				{ "scalar false", { ["if"] = { arg = "a", eq = 1 } }, { a = 2 }, { a = 1 }, false },
 			})("%s", function(_name, argType, args, globals, expected)
@@ -177,7 +177,7 @@ describe("includeConditionalArg", function()
 			end)
 		end)
 		describe("neq", function()
-			it:each({
+			it.each({
 				{ "scalar true", { ["if"] = { global = "a", neq = 1 } }, {}, { a = 2 }, true },
 				{
 					"scalar false",
