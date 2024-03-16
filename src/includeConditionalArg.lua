@@ -3,7 +3,6 @@ local HttpService = game:GetService("HttpService")
 
 local Packages = script:FindFirstAncestor("Packages")
 local LuauPolyfill = require(Packages.LuauPolyfill)
-local Array = LuauPolyfill.Array
 local Boolean = LuauPolyfill.Boolean
 local Error = LuauPolyfill.Error
 type Array<T> = LuauPolyfill.Array<T>
@@ -21,12 +20,13 @@ type Globals = storyJsModule.Globals
 type InputType = storyJsModule.InputType
 type Conditional = storyJsModule.Conditional
 local function count(vals: Array<any>)
-	return Array.filter(
-		Array.map(vals, function(v)
-			return typeof(v) ~= nil
-		end), --[[ ROBLOX CHECK: check if 'vals' is an Array ]]
-		Boolean
-	).length
+	-- ROBLOX deviation START: Base transpilation does not handle arrays with holes
+	local c = 0
+	for _ in vals do
+		c += 1
+	end
+	return c
+	-- ROBLOX deviation END
 end
 local function testValue(cond: Omit<Conditional, "arg" | "global">, value: any)
 	local exists, eq, neq, truthy
@@ -42,21 +42,22 @@ local function testValue(cond: Omit<Conditional, "arg" | "global">, value: any)
 		error(Error.new(`Invalid conditional test {HttpService:JSONEncode({ exists = exists, eq = eq, neq = neq })}`))
 		-- ROBLOX deviation END
 	end
-	if typeof(eq) ~= nil then
+	-- ROBLOX deviation START: `nil` to `"nil"`
+	if typeof(eq) ~= "nil" then
 		-- ROBLOX deviation START: Using direct == comparison instead
 		return value == eq
 		-- ROBLOX deviation END
 	end
-	if typeof(neq) ~= nil then
+	if typeof(neq) ~= "nil" then
 		-- ROBLOX deviation START: Direct == comparison instead of using isEqual
 		return not Boolean.toJSBoolean(value == neq)
 		-- ROBLOX deviation END
 	end
-	if typeof(exists) ~= nil then
-		local valueExists = typeof(value) ~= nil
+	if typeof(exists) ~= "nil" then
+		local valueExists = typeof(value) ~= "nil"
 		return if Boolean.toJSBoolean(exists) then valueExists else not Boolean.toJSBoolean(valueExists)
 	end
-	local shouldBeTruthy = if typeof(truthy) == nil then true else truthy
+	local shouldBeTruthy = if typeof(truthy) == "nil" then true else truthy
 	return if Boolean.toJSBoolean(shouldBeTruthy)
 		then not not Boolean.toJSBoolean(value)
 		else not Boolean.toJSBoolean(value)

@@ -68,28 +68,21 @@ export type ViewMode = story.ViewMode
  ]]
 local function sanitize(string_)
 	return string_
-		:toLowerCase()
+		:lower()
 		-- eslint-disable-next-line no-useless-escape
-		:replace(
-			RegExp(
-				"[ \u{2019}\u{2013}\u{2014}\u{2015}\u{2032}\u{BF}'`~!@#$%^&*()_|+\\-=?;:'\",.<>\\{\\}\\[\\]\\\\\\/]",
-				"gi"
-			), --[[ ROBLOX NOTE: global flag is not implemented yet ]]
+		:gsub(
+			"[ \u{2019}\u{2013}\u{2014}\u{2015}\u{2032}\u{BF}'`~!@#%$%%%^&*%(%)_|+\\-=?;:'\",%.<>{}%[%]/]",
 			"-"
 		)
-		:replace(RegExp("-+", "g") --[[ ROBLOX NOTE: global flag is not implemented yet ]], "-")
-		:replace(RegExp("^-+"), "")
-		:replace(RegExp("-+$"), "")
+		:gsub("%-+", "-")
+		:gsub("^%-+", "")
+		:gsub("%-+$", "")
 end
 exports.sanitize = sanitize
 local function sanitizeSafe(string_, part: string)
 	local sanitized = sanitize(string_)
 	if sanitized == "" then
-		error(
-			Error.new(
-				("Invalid %s '%s', must include alphanumeric characters"):format(tostring(part), tostring(string_))
-			)
-		)
+		error(Error.new(`Invalid {part} '{string_}', must include alphanumeric characters`))
 	end
 	return sanitized
 end
@@ -140,7 +133,7 @@ export type SeparatorOptions = { rootSeparator: string | RegExp, groupSeparator:
 local function parseKind(kind: string, ref0: SeparatorOptions)
 	local rootSeparator, groupSeparator = ref0.rootSeparator, ref0.groupSeparator
 	-- ROBLOX deviation START: Use LuauPolyfill to set the split limit
-	local root, remainder = table.unpack(LuauPolyfill.String.split(kind, rootSeparator, 2), 1, 2)
+	local root, remainder = table.unpack(LuauPolyfill.String.split(kind, tostring(rootSeparator), 2), 1, 2)
 	-- ROBLOX deviation END
 	local groups = Array.filter(
 		(Boolean.toJSBoolean(remainder) and remainder or kind):split(groupSeparator),
