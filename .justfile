@@ -21,6 +21,9 @@ lint:
 	selene {{ project_dir }}
 	stylua --check {{ project_dir }}
 
+convert-latest:
+	./scripts/convert-latest.py ComponentDriven/csf
+
 wally-install:
 	wally install
 	rojo sourcemap {{ dev_project }} -o {{ sourcemap_path }}
