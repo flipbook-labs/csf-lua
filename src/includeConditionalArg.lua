@@ -19,6 +19,21 @@ type Args = storyJsModule.Args
 type Globals = storyJsModule.Globals
 type InputType = storyJsModule.InputType
 type Conditional = storyJsModule.Conditional
+-- ROBLOX deviation START: Quick and dirty implementation of tiny-isequal
+local function isEqual(a: any, b: any)
+	if typeof(a) == "table" and typeof(b) == "table" then
+		-- Just doing a quick shallow key comparison
+		for key in a do
+			if b[key] ~= nil then
+				return false
+			end
+		end
+		return true
+	else
+		return a == b
+	end
+end
+-- ROBLOX deviation END
 local function count(vals: Array<any>)
 	-- ROBLOX deviation START: Base transpilation does not handle arrays with holes
 	local c = 0
@@ -38,26 +53,21 @@ local function testValue(cond: Omit<Conditional, "arg" | "global">, value: any)
 		count({ exists, eq, neq, truthy })
 		> 1 --[[ ROBLOX CHECK: operator '>' works only if either both arguments are strings or both are a number ]]
 	then
-		-- ROBLOX deviation START: Using HttpService to stringify json
 		error(Error.new(`Invalid conditional test {HttpService:JSONEncode({ exists = exists, eq = eq, neq = neq })}`))
-		-- ROBLOX deviation END
 	end
-	-- ROBLOX deviation START: `nil` to `"nil"`
+	-- ROBLOX deviation START: `"undefined"` to `"nil"`
 	if typeof(eq) ~= "nil" then
-		-- ROBLOX deviation START: Using direct == comparison instead
-		return value == eq
-		-- ROBLOX deviation END
+		return isEqual(value, eq)
 	end
 	if typeof(neq) ~= "nil" then
-		-- ROBLOX deviation START: Direct == comparison instead of using isEqual
-		return not Boolean.toJSBoolean(value == neq)
-		-- ROBLOX deviation END
+		return not Boolean.toJSBoolean(isEqual(value, neq))
 	end
 	if typeof(exists) ~= "nil" then
 		local valueExists = typeof(value) ~= "nil"
 		return if Boolean.toJSBoolean(exists) then valueExists else not Boolean.toJSBoolean(valueExists)
 	end
 	local shouldBeTruthy = if typeof(truthy) == "nil" then true else truthy
+	-- ROBLOX deviation END
 	return if Boolean.toJSBoolean(shouldBeTruthy)
 		then not not Boolean.toJSBoolean(value)
 		else not Boolean.toJSBoolean(value)
