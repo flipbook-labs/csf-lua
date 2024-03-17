@@ -5,6 +5,7 @@ local Packages = script:FindFirstAncestor("Packages")
 local LuauPolyfill = require(Packages.LuauPolyfill)
 local Boolean = LuauPolyfill.Boolean
 local Error = LuauPolyfill.Error
+local Sift = require(Packages.Sift)
 type Array<T> = LuauPolyfill.Array<T>
 type Omit<T, K> = T --[[ ROBLOX TODO: TS 'Omit' built-in type is not available in Luau ]]
 local exports = {}
@@ -19,16 +20,10 @@ type Args = storyJsModule.Args
 type Globals = storyJsModule.Globals
 type InputType = storyJsModule.InputType
 type Conditional = storyJsModule.Conditional
--- ROBLOX deviation START: Quick and dirty implementation of tiny-isequal
+-- ROBLOX deviation START: Quick and dirty replacemenet for tiny-isequal
 local function isEqual(a: any, b: any)
 	if typeof(a) == "table" and typeof(b) == "table" then
-		-- Just doing a quick shallow key comparison
-		for key in a do
-			if b[key] ~= nil then
-				return false
-			end
-		end
-		return true
+		return Sift.Dictionary.equalsDeep(a, b)
 	else
 		return a == b
 	end

@@ -11,6 +11,7 @@ shared-packages = "game.ReplicatedStorage.Packages"
 LuauPolyfill = "jsdotlua/luau-polyfill@1.2.6"
 RegExp = "jsdotlua/luau-regexp@0.2.1"
 Promise = "evaera/promise@4.0.0"
+Sift = "csqrl/sift@0.0.8"
 
 [dev-dependencies]
 Jest = "jsdotlua/jest@3.6.1-rc.2"
