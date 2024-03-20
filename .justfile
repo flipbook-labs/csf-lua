@@ -8,6 +8,8 @@ tmpdir := `mktemp -d`
 global_defs_path := tmpdir / "globalTypes.d.lua"
 sourcemap_path := tmpdir / "sourcemap.json"
 
+client_settings := "/Applications/RobloxStudio.app/Contents/MacOS/ClientSettings"
+
 default:
   @just --list
 
@@ -19,10 +21,22 @@ lint:
 	selene {{ project_dir }}
 	stylua --check {{ project_dir }}
 
+convert-latest:
+	./scripts/convert-latest.py ComponentDriven/csf
+
 wally-install:
 	wally install
 	rojo sourcemap {{ dev_project }} -o {{ sourcemap_path }}
 	wally-package-types --sourcemap {{ sourcemap_path }} {{ packages_dir }}
+
+set-flags:
+	mkdir -p {{ client_settings }}
+	cp -R scripts/ClientAppSettings.json {{ client_settings }}
+
+test:
+    just set-flags
+    rojo build {{ dev_project }} -o test-place.rbxl
+    run-in-roblox --place test-place.rbxl --script scripts/run-tests.lua
 
 analyze:
 	curl -s -o {{ global_defs_path }} \
