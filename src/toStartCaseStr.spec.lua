@@ -8,7 +8,7 @@ local test = JestGlobals.test--[[ eslint-disable eslint-comments/disable-enable-
 -- local startCase = require(Packages.lodash.startCase).default
 -- ROBLOX deviation END
 local toStartCaseStr = require(script.Parent.toStartCaseStr).toStartCaseStr
-test:each({
+test.each({
 	{ "snake_case", "Snake Case" },
 	{ "AAAaaaAAAaaa", "AA Aaaa AA Aaaa" },
 	{ "kebab-case", "Kebab Case" },

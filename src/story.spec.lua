@@ -1,7 +1,14 @@
 -- ROBLOX upstream: https://github.com/ComponentDriven/csf/blob/v0.1.2-next.0/src/story.test.ts
+
+local Packages = script:FindFirstAncestor("Packages")
+local JestGlobals = require(Packages.Dev.JestGlobals)
+local expect = JestGlobals.expect
+local test = JestGlobals.test
 -- ROBLOX deviation START: Can't test types, so we don't use this file
+test("should pass", function()
+	expect(true).toBe(true)
+end)
 --[=[
-local Packages --[[ ROBLOX comment: must define Packages module ]]
 local LuauPolyfill = require(Packages.LuauPolyfill)
 local Symbol = LuauPolyfill.Symbol
 local Promise = require(Packages.Promise)
@@ -233,8 +240,8 @@ test("You can assign a component to Meta, even when you pass a top type", functi
 	expectTypeOf({ component = Button }):toMatchTypeOf()
 	expectTypeOf({ component = Button }):toMatchTypeOf()
 	expectTypeOf({ component = Button }):toMatchTypeOf()
-	expectTypeOf({ component = Button })["not"]:toMatchTypeOf()
-	expectTypeOf({ component = Button })["not"]:toMatchTypeOf()
+	expectTypeOf({ component = Button }).never:toMatchTypeOf()
+	expectTypeOf({ component = Button }).never:toMatchTypeOf()
 end)
 ]=]
 -- ROBLOX deviation END
